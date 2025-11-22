@@ -45,7 +45,8 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add pdfs.json
           git diff-index --quiet HEAD || git commit -m "Update generated pdfs.json"
-          git push origin HEAD
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/BronzeGarden/bible-study-pdf.git HEAD
+
   # Single deploy job since we're just deploying
   deploy:
     needs: process_pdfs
