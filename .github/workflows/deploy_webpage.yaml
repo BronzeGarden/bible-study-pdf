@@ -45,22 +45,4 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add pdfs.json
           git diff-index --quiet HEAD || git commit -m "Update generated pdfs.json"
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/BronzeGarden/bible-study-pdf.git HEAD
-
-  # Single deploy job since we're just deploying
-  deploy:
-    needs: process_pdfs
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          # Upload entire repository
-          path: '.'    
+          git push origin HEAD
