@@ -17,25 +17,17 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
+  build_and_deploy:
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Checkout repo
       - uses: actions/checkout@v3
-        with:
-          persist-credentials: true  # allows using GITHUB_TOKEN for push
-
-      # Step 2: Generate pdfs.json
       - name: Generate pdfs.json
         run: |
           python3 - <<'EOF'
           import os, json
           files = sorted([f for f in os.listdir("pdfs") if f.lower().endswith(".pdf")])
           json.dump(files, open("pdfs.json", "w"), indent=2)
-          print("Generated pdfs.json:", files)
           EOF
-
-      # Step 3: Commit pdfs.json if changed
       - name: Commit pdfs.json
         run: |
           git config --global user.name "github-actions[bot]"
@@ -43,21 +35,11 @@ jobs:
           git add pdfs.json
           git diff-index --quiet HEAD || git commit -m "Update generated pdfs.json"
           git push origin HEAD
-  deploy:
-    needs: build
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
           path: '.'
       - name: Deploy to GitHub Pages
         id: deployment
