@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>PDF Viewer</title>
+  <style>
+    body { font-family: sans-serif; max-width: 900px; margin: auto; padding: 20px; }
+    h1 { font-size: 24px; }
+    iframe { width: 100%; height: 85vh; border: none; margin-top: 15px; }
+    .buttons { margin-top: 15px; display: flex; justify-content: space-between; }
+    button {
+      padding: 8px 14px;
+      font-size: 16px;
+      cursor: pointer;
+      border: 1px solid #888;
+      background: #f0f0f0;
+      border-radius: 6px;
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+
+<h1 id="title"></h1>
+
+<iframe id="viewer"></iframe>
+
+<div class="buttons">
+  <button id="prev">← Previous Day</button>
+  <button id="next">Next Day →</button>
+</div>
+
+<script>
+  // Read ?file=... from URL
+  const params = new URLSearchParams(window.location.search);
+  const currentFile = params.get("file");
+
+  const titleEl = document.getElementById("title");
+  const viewerEl = document.getElementById("viewer");
+  const prevBtn = document.getElementById("prev");
+  const nextBtn = document.getElementById("next");
+
+  titleEl.textContent = currentFile || "Unknown PDF";
+
+  // Load the PDF
+  viewerEl.src = "pdfs/" + currentFile;
+
+  // Load pdf list to compute prev/next
+  fetch("pdfs.json")
+    .then(res => res.json())
+    .then(pdfs => {
+      const index = pdfs.indexOf(currentFile);
+
+      // Set up next button
+      if (index > 0) {
+        const nextFile = pdfs[index - 1];
+        nextBtn.onclick = () =>
+          window.location.href = "viewer.html?file=" + encodeURIComponent(nextFile);
+      } else {
+        nextBtn.disabled = true;
+      }
+
+      // Set up prev button
+      if (index < pdfs.length - 1) {
+        const prevFile = pdfs[index + 1];
+        prevBtn.onclick = () =>
+          window.location.href = "viewer.html?file=" + encodeURIComponent(prevFile);
+      } else {
+        prevBtn.disabled = true;
+      }
+    })
+    .catch(err => console.error("Failed to load pdfs.json:", err));
+</script>
+
+</body>
+</html>

@@ -3,83 +3,35 @@
 <head>
   <meta charset="utf-8">
   <title>Bible Study Archive</title>
-
   <style>
-    body {
-      font-family: sans-serif;
-      max-width: 900px;
-      margin: auto;
-      padding: 20px;
-    }
-    h1 {
-      font-size: 28px;
-    }
-    ul {
-      padding-left: 20px;
-    }
-    li {
-      margin: 6px 0;
-    }
-    a {
-      text-decoration: none;
-      color: #0077cc;
-      cursor: pointer;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-    iframe {
-      width: 100%;
-      height: 90vh;
-      border: none;
-      margin-top: 20px;
-    }
+    body { font-family: sans-serif; max-width: 800px; margin: auto; padding: 20px; }
+    h1 { font-size: 28px; }
+    ul { padding-left: 20px; }
+    li { margin: 8px 0; }
+    a { color: #0077cc; text-decoration: none; }
+    a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
 
 <h1>PDF Archive</h1>
 
-<ul id="pdf-list">
-  <!-- PDF links will go here -->
-</ul>
-
-<p>Viewing: <strong id="current-pdf">None</strong></p>
-
-<iframe id="pdf-viewer" src="" title="PDF Viewer"></iframe>
+<ul id="pdf-list"></ul>
 
 <script>
-  const listEl = document.getElementById("pdf-list");
-  const viewerEl = document.getElementById("pdf-viewer");
-  const currentEl = document.getElementById("current-pdf");
-
-  // Load the pdfs.json file
   fetch("pdfs.json")
-    .then(response => response.json())
+    .then(res => res.json())
     .then(pdfs => {
-      pdfs.forEach((pdf, index) => {
+      const list = document.getElementById("pdf-list");
+      pdfs.forEach(name => {
         const li = document.createElement("li");
-        const link = document.createElement("a");
-        link.textContent = pdf;
-        link.href = "#";
-        link.addEventListener("click", (e) => {
-          e.preventDefault();
-          viewerEl.src = `pdfs/${pdf}`;
-          currentEl.textContent = pdf;
-        });
-        li.appendChild(link);
-        listEl.appendChild(li);
+        li.innerHTML = `<a href="viewer.html?file=${encodeURIComponent(name)}">${name}</a>`;
+        list.appendChild(li);
       });
-
-      // Optionally, load the first PDF by default
-      if (pdfs.length > 0) {
-        viewerEl.src = `pdfs/${pdfs[0]}`;
-        currentEl.textContent = pdfs[0];
-      }
     })
     .catch(err => {
-      listEl.innerHTML = "<li>Could not load PDFs</li>";
-      console.error("Failed to load pdfs.json:", err);
+      document.getElementById("pdf-list").innerHTML = "<li>Error loading PDFs</li>";
+      console.error(err);
     });
 </script>
 
