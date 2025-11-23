@@ -29,8 +29,9 @@
 <iframe id="viewer"></iframe>
 
 <div class="buttons">
-  <button id="prev">← Previous Day</button>
-  <button id="next">Next Day →</button>
+    <button id="prev-btn">Previous Day</button>
+    <button id="home-btn">Home</button>
+    <button id="next-btn">Next Day</button>
 </div>
 
 <script>
@@ -40,10 +41,15 @@
 
   const titleEl = document.getElementById("title");
   const viewerEl = document.getElementById("viewer");
-  const prevBtn = document.getElementById("prev");
-  const nextBtn = document.getElementById("next");
+  const prevBtn = document.getElementById("prev-btn");
+  const homeBtn = document.getElementById("home-btn");
+  const nextBtn = document.getElementById("next-btn");
 
   titleEl.textContent = currentFile || "Unknown PDF";
+
+  homeBtn.onclick = () => {
+        window.location.href = "index.html";
+  };
 
   // Load the PDF
   viewerEl.src = "pdfs/" + currentFile;
